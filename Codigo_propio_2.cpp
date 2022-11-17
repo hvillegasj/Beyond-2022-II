@@ -196,15 +196,13 @@ int main(int argc, char *argv[])
    BilinearForm a_1(&fespace);
    BilinearForm a_2(&fespace);
 
-   //a.AddDomainIntegrator(new MixedScalarWeakDivergenceIntegrator(e_1));
    a_1.AddDomainIntegrator(new MixedScalarWeakDivergenceIntegrator(e_1));
-   a_2.AddDomainIntegrator(new MixedDirectionalDerivativeIntegrator(e_2));
+   a_2.AddDomainIntegrator(new MixedGradGradIntegrator(e_2));
 
    // 10. Assemble the bilinear form and the corresponding linear system,
    //     applying any necessary transformations such as: eliminating boundary
    //     conditions, applying conforming constraints for non-conforming AMR,
    //     static condensation, etc.
-   //a.Assemble();
    a_1.Assemble();
    a_2.Assemble();
 
@@ -214,7 +212,9 @@ int main(int argc, char *argv[])
       {
          a.Elem(i,j)=a_1.Elem(i,j)+a_2.Elem(i,j);
       }
-   }   
+   }  
+
+   a.Finalize(1); 
 
    OperatorPtr A;
    Vector B, X;
